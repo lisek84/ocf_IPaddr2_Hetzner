@@ -21,7 +21,7 @@ There copy file IPaddr2_Hetzner
 ```
 chmod 755 /usr/lib/ocf/resource.d/custom/IPaddr2_Hetzner
 ```
-Also ececute this on all of your machines in cluster
+Also execute this on all of your machines in cluster
 ```
 echo "1 vswitch" >> /etc/iproute2/rt_tables
 ```
