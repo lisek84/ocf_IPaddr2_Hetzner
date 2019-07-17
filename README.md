@@ -14,11 +14,18 @@ https://wiki.hetzner.de/index.php/Vswitch/en
 # How to install it
 
 (You can replace custom with anything you like, but remember about it when configuring provider name in pacemaker)
-
+```
 mkdir /usr/lib/ocf/resource.d/custom/
+```
 There copy file IPaddr2_Hetzner
-
+```
 chmod 755 /usr/lib/ocf/resource.d/custom/IPaddr2_Hetzner
+```
+Also ececute this on all of your machines in cluster
+```
+echo "1 vswitch" >> /etc/iproute2/rt_tables
+```
+
 
 # Configure Pacemaker
 
