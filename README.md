@@ -27,9 +27,10 @@ Also remember about provider name as provider=(custom in this case) or ocf:custo
 
 
 example configuration:
-
+```
 primitive failover1 ocf:custom:IPaddr2_Hetzner \
         params ip=111.222.333.444 nic=eno1.4022 cidr_netmask=27 gateway=111.222.333.441 routing_table=vswitch \
         op monitor on-fail=restart interval=10s \
         op start interval=0 timeout=20s on-fail=restart \
         meta failure-timeout=30s migration-threshold=5 target-role=Started
+```
