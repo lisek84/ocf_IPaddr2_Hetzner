@@ -5,7 +5,7 @@ This is Modified version of offical IPaddr2 script.
 
 It allows you to use additional routing tables for failover IP's
 
-It's named Hetzner cause it's prepared to work for them. 
+It's named Hetzner cause it's prepared to work for them. BUT it can be used anywhere where you need to add routing tables!
 
 It's prepared to match this Hetzner Manual:
 https://wiki.hetzner.de/index.php/Vswitch/en
