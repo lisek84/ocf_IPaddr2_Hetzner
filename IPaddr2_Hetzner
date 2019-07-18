@@ -360,14 +360,6 @@ Whether or not to run arping for IPv4 collision detection check.
 <content type="string" default="${OCF_RESKEY_run_arping_default}"/>
 </parameter>
 
-<parameter name="gateway">
-<longdesc lang="en">
-Please provide here, a full ip address of your Hetzner failover IP gateway
-</longdesc>
-<shortdesc lang="en">Failover IP Gateway goes here</shortdesc>
-<content type="string" default=""/>
-</parameter>
-
 <parameter name="routing_table">
 <longdesc lang="en">
 Please provide here, a full name of your routing table for failover IP
@@ -412,11 +404,6 @@ ip_init() {
 
         if [ X"$OCF_RESKEY_ip" = "X" ] && [ "$__OCF_ACTION" != "stop" ]; then
                 ocf_exit_reason "IP address (the ip parameter) is mandatory"
-                exit $OCF_ERR_CONFIGURED
-        fi
-
-        if [ X"$OCF_RESKEY_gateway" = "X" ] && [ "$__OCF_ACTION" != "stop" ]; then
-                ocf_exit_reason "Gateway IP address (the ip parameter) is mandatory"
                 exit $OCF_ERR_CONFIGURED
         fi
 
@@ -589,15 +576,12 @@ delete_interface () {
         ipaddr="$1"
         iface="$2"
         netmask="$3"
-        gw="$4"
-        table="$5"
+        table="$4"
 
         CMD="$IP2UTIL -f $FAMILY addr delete $ipaddr/$netmask dev $iface"
-        CMD2="$IP2UTIL route del default via $gw dev $iface table $table"
         CMD3="$IP2UTIL rule del to $ipaddr lookup $table"
         CMD4="$IP2UTIL rule del from $ipaddr lookup $table"
 
-        ocf_run $CMD2 || return $OCF_ERR_GENERIC
         ocf_run $CMD3 || return $OCF_ERR_GENERIC
         ocf_run $CMD4 || return $OCF_ERR_GENERIC
         ocf_run $CMD || return $OCF_ERR_GENERIC
@@ -623,9 +607,8 @@ add_interface () {
         netmask="$2"
         broadcast="$3"
         iface="$4"
-        label="$7"
-        gw="$5"
-        table="$6"
+        label="$6"
+        table="$5"
 
         if [ "$FAMILY" = "inet" ] && ocf_is_true $OCF_RESKEY_run_arping &&
            check_binary arping; then
@@ -663,11 +646,9 @@ add_interface () {
 
         cmd2="$IP2UTIL rule add from $ipaddr lookup $table"
         cmd3="$IP2UTIL rule add to $ipaddr lookup $table"
-        cmd4="$IP2UTIL route add default via $gw dev $iface table $table "
 
         ocf_run $cmd2 || return $OCF_ERR_GENERIC
         ocf_run $cmd3 || return $OCF_ERR_GENERIC
-        ocf_run $cmd4 || return $OCF_ERR_GENERIC
 
 
         msg="Bringing device $iface up"
@@ -1025,7 +1006,7 @@ ip_start() {
                         done
                 fi
 
-                add_interface $OCF_RESKEY_ip $NETMASK ${BRDCAST:-none} $NIC $OCF_RESKEY_gateway $OCF_RESKEY_routing_table $IFLABEL
+                add_interface $OCF_RESKEY_ip $NETMASK ${BRDCAST:-none} $NIC $OCF_RESKEY_routing_table $IFLABEL
                 rc=$?
 
                 if [ $rc -ne $OCF_SUCCESS ]; then
@@ -1106,7 +1087,7 @@ ip_stop() {
         fi
 
         if [ "$ip_del_if" = "yes" ]; then
-                delete_interface $OCF_RESKEY_ip $NIC $NETMASK $OCF_RESKEY_gateway $OCF_RESKEY_routing_table
+                delete_interface $OCF_RESKEY_ip $NIC $NETMASK $OCF_RESKEY_routing_table
                 if [ $? -ne 0 ]; then
                         ocf_exit_reason "Unable to remove IP [${OCF_RESKEY_ip} from interface [ $NIC ]"
                         exit $OCF_ERR_GENERIC
