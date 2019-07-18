@@ -50,3 +50,10 @@ primitive gw Route \
         op monitor on-fail=restart interval=10s \
         meta failure-timeout=30s migration-threshold=5 is-managed=true target-role=Started
 ```
+
+## Authors
+* **Lisek** (https://github.com/lisek84)
+
+## License
+
+This project is licensed under the GNU License
